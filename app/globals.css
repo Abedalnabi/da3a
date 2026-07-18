@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --color-cream: #f8f3ee;
+  --color-cream-deep: #efe0cb;
+  --color-card: #fdf8ef;
+  --color-rose: #a97fc0;
+  --color-rose-deep: #7d5694;
+  --color-rose-light: #d7bfe6;
+  --color-brown: #8b6d4b;
+  --color-brown-deep: #6b4f35;
+  --color-ink: #4a3b32;
+
+  --font-display: var(--font-aref-ruqaa);
+  --font-body: var(--font-markazi);
+  --font-ui: var(--font-tajawal);
+  --font-numeral: var(--font-cormorant);
+}
+
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-cream-deep: var(--color-cream-deep);
+  --color-card: var(--color-card);
+  --color-rose: var(--color-rose);
+  --color-rose-deep: var(--color-rose-deep);
+  --color-rose-light: var(--color-rose-light);
+  --color-brown: var(--color-brown);
+  --color-brown-deep: var(--color-brown-deep);
+  --color-ink: var(--color-ink);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-ui: var(--font-ui);
+  --font-numeral: var(--font-numeral);
+
+  --animate-flicker: flicker 6s ease-in-out infinite;
+  --animate-float-slow: float-slow 9s ease-in-out infinite;
+  --animate-float-slower: float-slow 13s ease-in-out infinite;
+  --animate-spin-slow: spin 18s linear infinite;
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    45% { opacity: 0.86; }
+    50% { opacity: 0.97; }
+    55% { opacity: 0.82; }
+  }
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-18px) rotate(4deg); }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-ui);
+}
+
+::selection {
+  background: var(--color-rose-light);
+  color: var(--color-rose-deep);
+}
+
+/* thin elegant scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--color-rose-deep), var(--color-rose));
+  border-radius: 999px;
+}
+
+.text-gradient-rose {
+  background-image: linear-gradient(120deg, var(--color-rose-deep) 0%, var(--color-rose) 45%, var(--color-brown-deep) 75%, var(--color-rose-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-rose-light) 20%, var(--color-rose) 50%, var(--color-rose-light) 80%, transparent);
+}
+
+.glass-panel {
+  background: linear-gradient(155deg, rgba(253, 248, 239, 0.92), rgba(253, 248, 239, 0.72));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(181, 87, 107, 0.22);
+  box-shadow: 0 20px 50px -25px rgba(139, 66, 88, 0.35);
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(var(--petal-drift, 0px), 115vh, 0) rotate(var(--petal-spin, 360deg));
+  }
+}
+
+.animate-petal-fall {
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
