@@ -176,7 +176,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
               handleKnock(e as unknown as React.MouseEvent<HTMLDivElement>);
             }
           }}
-          className="absolute inset-0 cursor-pointer overflow-hidden focus:outline-none"
+          className="absolute inset-0 cursor-pointer touch-manipulation select-none overflow-hidden focus:outline-none"
         >
           {stage === "knocking" && (
             <div
