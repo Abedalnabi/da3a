@@ -6,6 +6,43 @@ import { COPY, WEDDING } from "@/lib/wedding";
 import { initBackgroundMusic, playBackgroundMusicAudibly } from "@/lib/backgroundMusic";
 import { playKnockSound } from "@/lib/knockSound";
 
+// Slow, continuous auto-scroll all the way to the bottom of the page —
+// a steady smooth crawl rather than a jump or a burst of discrete ticks.
+// Cancels itself the moment the guest scrolls, swipes, or presses a key.
+const AUTO_SCROLL_SPEED_PX_PER_SEC = 200;
+
+const startSmoothAutoScrollToBottom = () => {
+  let cancelled = false;
+  let lastTime: number | null = null;
+  let rafId: number;
+
+  const cancel = () => {
+    cancelled = true;
+  };
+  const cancelEvents: Array<keyof WindowEventMap> = ["wheel", "touchstart", "keydown", "pointerdown"];
+  cancelEvents.forEach((evt) => window.addEventListener(evt, cancel, { passive: true }));
+
+  const step = (time: number) => {
+    if (cancelled) return;
+    if (lastTime === null) lastTime = time;
+    const dtSeconds = (time - lastTime) / 1000;
+    lastTime = time;
+
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (window.scrollY >= maxScroll - 1) return;
+
+    window.scrollBy(0, AUTO_SCROLL_SPEED_PX_PER_SEC * dtSeconds);
+    rafId = window.requestAnimationFrame(step);
+  };
+  rafId = window.requestAnimationFrame(step);
+
+  return () => {
+    cancelled = true;
+    window.cancelAnimationFrame(rafId);
+    cancelEvents.forEach((evt) => window.removeEventListener(evt, cancel));
+  };
+};
+
 type DoorIntroProps = {
   /** Called once, the moment the door finishes opening and the hero video takes over. */
   onRevealed: () => void;
@@ -117,12 +154,29 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
   // .reveal-* targets exist by the time GSAP looks for them.
   useEffect(() => {
     if (stage !== "hero") return;
-    gsap
+    const tl = gsap
       .timeline({ defaults: { ease: "power3.out" } })
       .fromTo(".reveal-groom", { autoAlpha: 0, y: 20, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9 }, 0.1)
       .fromTo(".reveal-amp", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.6 }, "-=0.3")
       .fromTo(".reveal-bride", { autoAlpha: 0, y: 20, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9 }, "-=0.4")
       .fromTo(".reveal-meta", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.15 }, "-=0.3");
+
+    // Once the reveal text has finished writing itself in, ease the page
+    // into a slow, smooth, continuous crawl all the way to the bottom of
+    // the site — it stops itself the moment the guest takes over scrolling.
+    let autoScrollTimeout: number | undefined;
+    let cancelAutoScroll: (() => void) | undefined;
+    tl.eventCallback("onComplete", () => {
+      if (reducedMotionRef.current) return;
+      autoScrollTimeout = window.setTimeout(() => {
+        cancelAutoScroll = startSmoothAutoScrollToBottom();
+      }, 900);
+    });
+
+    return () => {
+      window.clearTimeout(autoScrollTimeout);
+      cancelAutoScroll?.();
+    };
   }, [stage]);
 
   const isFixed = stage !== "hero";
@@ -160,7 +214,13 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
         style={{ display: stage === "hero" ? "block" : "none" }}
       />
 
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,_rgba(74,59,50,0.45)_0%,_transparent_35%)]" />
+      <div
+        className={`pointer-events-none absolute inset-0 ${
+          stage === "hero"
+            ? "bg-[linear-gradient(to_top,_rgba(40,30,24,0.6)_0%,_rgba(40,30,24,0.3)_45%,_rgba(40,30,24,0.12)_70%,_transparent_100%)]"
+            : "bg-[linear-gradient(to_top,_rgba(74,59,50,0.45)_0%,_transparent_35%)]"
+        }`}
+      />
 
       {/* knock interaction layer */}
       {stage !== "hero" && (
@@ -210,27 +270,27 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
           ref={revealRef}
           className="relative flex min-h-[100svh] flex-col items-center justify-center gap-3 px-6 text-center"
         >
-          <h1 className="font-display text-5xl leading-[1.4] text-white sm:text-6xl">
-            <span className="reveal-groom invisible inline-block opacity-0 drop-shadow-[0_2px_14px_rgba(0,0,0,0.5)]">
+          <h1 className="font-display text-5xl font-bold leading-[1.4] text-white sm:text-6xl">
+            <span className="reveal-groom invisible inline-block opacity-0 [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.9))_drop-shadow(0_6px_20px_rgba(0,0,0,0.6))]">
               {WEDDING.groom}
             </span>
             <br />
             <span
               aria-hidden="true"
-              className="reveal-amp invisible inline-block text-3xl opacity-0 drop-shadow-[0_2px_14px_rgba(0,0,0,0.5)] sm:text-4xl"
+              className="reveal-amp invisible inline-block text-3xl opacity-0 [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.9))_drop-shadow(0_6px_20px_rgba(0,0,0,0.6))] sm:text-4xl"
             >
               &amp;
             </span>
             <br />
-            <span className="reveal-bride invisible inline-block opacity-0 drop-shadow-[0_2px_14px_rgba(0,0,0,0.5)]">
+            <span className="reveal-bride invisible inline-block opacity-0 [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.9))_drop-shadow(0_6px_20px_rgba(0,0,0,0.6))]">
               {WEDDING.bride}
             </span>
           </h1>
 
-          <p className="reveal-meta invisible mt-2 font-numeral text-xl text-white opacity-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-2xl">
+          <p className="reveal-meta invisible mt-2 font-numeral text-xl font-semibold text-white opacity-0 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.9))_drop-shadow(0_4px_14px_rgba(0,0,0,0.65))] sm:text-2xl">
             {WEDDING.dayName}، {WEDDING.dateLabel}
           </p>
-          <p className="reveal-meta invisible max-w-sm font-body text-xl text-white opacity-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-2xl">
+          <p className="reveal-meta invisible max-w-sm font-body text-xl font-semibold text-white opacity-0 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.9))_drop-shadow(0_4px_14px_rgba(0,0,0,0.65))] sm:text-2xl">
             {COPY.heroTagline}
           </p>
 

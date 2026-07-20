@@ -1,6 +1,6 @@
 export const WEDDING = {
   groom: "محمد",
-  bride: "رؤى",
+  bride: "وصية الرسول",
   dayName: "الخميس",
   dateLabel: "13 أغسطس 2026",
   monthLabel: "أغسطس 2026",
@@ -11,7 +11,7 @@ export const WEDDING = {
   venueName: "صالة البنفسج للافراح",
   venueAddress: "تلاع العلي , عمّان",
   mapsQuery: "https://www.google.com/maps/search/?api=1&query=31.9983957,35.8605166&query_place_id=ChIJZ0aTfNqhHBURH6X6xcK__c8",
-  hashtag: "#محمد_ورؤى",
+  hashtag: "#محمد_ووصية_الرسول",
   groomFatherName: "تيسير الشامي",
   brideFatherName: "ظافر دار محمد",
 } as const;
