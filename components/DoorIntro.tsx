@@ -31,7 +31,10 @@ const startSmoothAutoScrollToBottom = () => {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     if (window.scrollY >= maxScroll - 1) return;
 
-    window.scrollBy(0, AUTO_SCROLL_SPEED_PX_PER_SEC * dtSeconds);
+    // The object form with behavior:"auto" forces an instant per-frame scroll —
+    // without it, the page's CSS `scroll-behavior: smooth` hijacks each tiny
+    // scrollBy call into its own overlapping animation, causing stutter.
+    window.scrollBy({ top: AUTO_SCROLL_SPEED_PX_PER_SEC * dtSeconds, left: 0, behavior: "auto" });
     rafId = window.requestAnimationFrame(step);
   };
   rafId = window.requestAnimationFrame(step);

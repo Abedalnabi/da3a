@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Aref_Ruqaa, Markazi_Text, Tajawal, Cormorant_Garamond } from "next/font/google";
+import { WEDDING } from "@/lib/wedding";
 import "./globals.css";
 
 const arefRuqaa = Aref_Ruqaa({
@@ -30,15 +31,23 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
+const OG_TITLE = `دعوة زفاف ${WEDDING.groom} & ${WEDDING.bride}`;
+const OG_DESCRIPTION = `${WEDDING.dayName}، ${WEDDING.dateLabel}${WEDDING.venueName ? ` • ${WEDDING.venueName}` : ""}`;
+
 export const metadata: Metadata = {
-  title: "محمد ورؤى | دعوة زفاف",
-  description:
-    "يسرنا دعوتكم لمشاركتنا أجمل لحظات العمر، حفل زفاف محمد ورؤى، الخميس 13 أغسطس 2026.",
+  metadataBase: new URL("https://da3a.vercel.app"),
+  title: OG_TITLE,
+  description: OG_DESCRIPTION,
   openGraph: {
-    title: "محمد ورؤى | دعوة زفاف",
-    description: "يسرنا دعوتكم لمشاركتنا أجمل لحظات العمر، الخميس 13 أغسطس 2026",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
     type: "website",
     locale: "ar",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
   },
   robots: {
     index: false,
