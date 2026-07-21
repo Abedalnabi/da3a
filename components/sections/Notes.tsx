@@ -1,32 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
 import Divider from "../ornaments/Divider";
 import FlowerIcon from "../ornaments/FlowerIcon";
 import { COPY, NOTES_ITEMS } from "@/lib/wedding";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { useScrollReveal } from "@/lib/useScrollReveal";
 
 export default function Notes() {
   const rootRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".notes-reveal", {
-        autoAlpha: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: { trigger: rootRef.current, start: "top 75%" },
-      });
-    }, rootRef);
-    return () => ctx.revert();
-  }, []);
+  useScrollReveal(rootRef, ".notes-reveal", { y: 20, duration: 0.8 });
 
   return (
     <section id="notes" ref={rootRef} className="relative px-6 py-14 sm:py-20">

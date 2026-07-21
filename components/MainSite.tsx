@@ -1,6 +1,5 @@
 import InvitationCard from "./sections/InvitationCard";
 import Countdown from "./sections/Countdown";
-import Program from "./sections/Program";
 import Venue from "./sections/Venue";
 import SaveTheDate from "./sections/SaveTheDate";
 import Notes from "./sections/Notes";
@@ -23,8 +22,6 @@ export default function MainSite() {
       <InvitationCard />
       <div className="hairline mx-auto max-w-4xl" />
       <Countdown />
-      {/* <div className="hairline mx-auto max-w-4xl" /> */}
-      {/* <Program /> */}
       <div className="hairline mx-auto max-w-4xl" />
       <Venue />
       <div className="hairline mx-auto max-w-4xl" />

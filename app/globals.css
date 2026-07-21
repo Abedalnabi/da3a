@@ -99,9 +99,27 @@ body {
   box-shadow: 0 20px 50px -25px rgba(139, 66, 88, 0.35);
 }
 
+/* Fluttering fall: a gentle side-to-side sway layered on top of the overall
+   drift, so petals meander down instead of sliding in a straight line. */
 @keyframes petal-fall {
   0% {
     transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.2 + var(--petal-sway, 24px)), 13vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.2));
+  }
+  40% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.4 - var(--petal-sway, 24px)), 36vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.4));
+  }
+  60% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.6 + var(--petal-sway, 24px)), 59vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.6));
+  }
+  80% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.8 - var(--petal-sway, 24px)), 82vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.8));
   }
   100% {
     transform: translate3d(var(--petal-drift, 0px), 115vh, 0) rotate(var(--petal-spin, 360deg));
@@ -110,7 +128,7 @@ body {
 
 .animate-petal-fall {
   animation-name: petal-fall;
-  animation-timing-function: linear;
+  animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 

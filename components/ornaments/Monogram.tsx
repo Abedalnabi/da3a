@@ -1,3 +1,5 @@
+import { WEDDING } from "@/lib/wedding";
+
 type MonogramProps = {
   size?: number;
   className?: string;
@@ -5,6 +7,8 @@ type MonogramProps = {
 };
 
 export default function Monogram({ size = 120, className = "", glow = false }: MonogramProps) {
+  const initials = `${WEDDING.groom[0]} ${WEDDING.bride[0]}`;
+
   return (
     <svg
       viewBox="0 0 200 200"
@@ -12,7 +16,7 @@ export default function Monogram({ size = 120, className = "", glow = false }: M
       height={size}
       className={className}
       role="img"
-      aria-label="شعار محمد ورؤى"
+      aria-label={`شعار ${WEDDING.groom} و${WEDDING.bride}`}
     >
       <defs>
         <radialGradient id="monogram-glow" cx="50%" cy="50%" r="50%">
@@ -64,7 +68,7 @@ export default function Monogram({ size = 120, className = "", glow = false }: M
         fontSize="72"
         fill="url(#monogram-ring)"
       >
-        م ر
+        {initials}
       </text>
     </svg>
   );

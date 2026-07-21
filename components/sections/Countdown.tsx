@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Divider from "../ornaments/Divider";
 import { toEasternArabicNumerals } from "@/lib/numerals";
 import { COPY, COUNTDOWN_LABELS, WEDDING } from "@/lib/wedding";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { useScrollReveal } from "@/lib/useScrollReveal";
 
 type TimeLeft = {
   days: number;
@@ -75,19 +70,7 @@ export default function Countdown() {
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".countdown-reveal", {
-        autoAlpha: 0,
-        y: 24,
-        duration: 0.9,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: { trigger: rootRef.current, start: "top 75%" },
-      });
-    }, rootRef);
-    return () => ctx.revert();
-  }, []);
+  useScrollReveal(rootRef, ".countdown-reveal");
 
   return (
     <section id="countdown" ref={rootRef} className="relative px-6 py-14 sm:py-20">

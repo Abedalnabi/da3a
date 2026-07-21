@@ -1,31 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
 import Divider from "../ornaments/Divider";
 import { COPY, WEDDING } from "@/lib/wedding";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { useScrollReveal } from "@/lib/useScrollReveal";
 
 export default function Venue() {
   const rootRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".venue-reveal", {
-        autoAlpha: 0,
-        y: 24,
-        duration: 0.9,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: { trigger: rootRef.current, start: "top 75%" },
-      });
-    }, rootRef);
-    return () => ctx.revert();
-  }, []);
+  useScrollReveal(rootRef, ".venue-reveal");
 
   return (
     <section id="venue" ref={rootRef} className="relative px-6 py-14 sm:py-20">
@@ -36,7 +18,6 @@ export default function Venue() {
         <Divider className="venue-reveal mt-6" />
 
         <div className="venue-reveal mt-12 flex w-full flex-col items-center gap-3">
-        
           <p className="font-display text-2xl leading-[1.35] pb-1 text-ink sm:text-3xl">{WEDDING.venueName}</p>
           <p className="font-ui text-base text-brown">{WEDDING.venueAddress}</p>
 
