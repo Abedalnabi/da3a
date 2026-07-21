@@ -6,56 +6,6 @@ import { COPY, WEDDING } from "@/lib/wedding";
 import { initBackgroundMusic, playBackgroundMusicAudibly } from "@/lib/backgroundMusic";
 import { playKnockSound } from "@/lib/knockSound";
 
-// Continuous auto-scroll all the way to the bottom of the page — eases in from
-// a stop, cruises at full speed, then eases out as it nears the bottom so it
-// glides to a stop instead of cutting off abruptly.
-// Cancels itself the moment the guest scrolls, swipes, or presses a key.
-const AUTO_SCROLL_SPEED_PX_PER_SEC = 650;
-const RAMP_UP_SECONDS = 0.7;
-const EASE_OUT_DISTANCE_PX = 260;
-
-const startSmoothAutoScrollToBottom = () => {
-  let cancelled = false;
-  let lastTime: number | null = null;
-  let elapsedSeconds = 0;
-  let rafId: number;
-
-  const cancel = () => {
-    cancelled = true;
-  };
-  const cancelEvents: Array<keyof WindowEventMap> = ["wheel", "touchstart", "keydown", "pointerdown"];
-  cancelEvents.forEach((evt) => window.addEventListener(evt, cancel, { passive: true }));
-
-  const step = (time: number) => {
-    if (cancelled) return;
-    if (lastTime === null) lastTime = time;
-    const dtSeconds = (time - lastTime) / 1000;
-    lastTime = time;
-    elapsedSeconds += dtSeconds;
-
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const remaining = maxScroll - window.scrollY;
-    if (remaining <= 1) return;
-
-    const rampInFactor = Math.min(elapsedSeconds / RAMP_UP_SECONDS, 1);
-    const rampOutFactor = Math.max(Math.min(remaining / EASE_OUT_DISTANCE_PX, 1), 0.15);
-    const speed = AUTO_SCROLL_SPEED_PX_PER_SEC * rampInFactor * rampOutFactor;
-
-    // The object form with behavior:"auto" forces an instant per-frame scroll —
-    // without it, the page's CSS `scroll-behavior: smooth` hijacks each tiny
-    // scrollBy call into its own overlapping animation, causing stutter.
-    window.scrollBy({ top: Math.min(speed * dtSeconds, remaining), left: 0, behavior: "auto" });
-    rafId = window.requestAnimationFrame(step);
-  };
-  rafId = window.requestAnimationFrame(step);
-
-  return () => {
-    cancelled = true;
-    window.cancelAnimationFrame(rafId);
-    cancelEvents.forEach((evt) => window.removeEventListener(evt, cancel));
-  };
-};
-
 type DoorIntroProps = {
   /** Called once, the moment the door finishes opening and the hero video takes over. */
   onRevealed: () => void;
@@ -174,29 +124,15 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
       .fromTo(".reveal-bride", { autoAlpha: 0, y: 20, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9 }, "-=0.4")
       .fromTo(".reveal-meta", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.15 }, "-=0.3");
 
-    // Once the reveal text has finished writing itself in, ease the page
-    // into a slow, smooth, continuous crawl all the way to the bottom of
-    // the site — it stops itself the moment the guest takes over scrolling.
-    let autoScrollTimeout: number | undefined;
-    let cancelAutoScroll: (() => void) | undefined;
-    tl.eventCallback("onComplete", () => {
-      if (reducedMotionRef.current) return;
-      autoScrollTimeout = window.setTimeout(() => {
-        cancelAutoScroll = startSmoothAutoScrollToBottom();
-      }, 900);
-    });
-
     return () => {
-      window.clearTimeout(autoScrollTimeout);
-      cancelAutoScroll?.();
+      tl.kill();
     };
   }, [stage]);
 
   // Decoding a full-screen looping video is real per-frame work — once it's
-  // scrolled entirely out of view there's no reason to keep paying for it,
-  // and it competes with the auto-scroll for the same CPU/GPU budget. The
-  // threshold is 0 (fully offscreen) rather than a partial one so it doesn't
-  // pause the moment scrolling starts while the video is still mostly visible.
+  // scrolled entirely out of view there's no reason to keep paying for it.
+  // The threshold is 0 (fully offscreen) rather than a partial one so it
+  // doesn't pause while the video is still mostly visible.
   useEffect(() => {
     if (stage !== "hero") return;
     const hero = heroVideoRef.current;
