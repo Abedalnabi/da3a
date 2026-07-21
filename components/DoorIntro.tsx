@@ -192,6 +192,24 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
     };
   }, [stage]);
 
+  // Decoding a full-screen looping video is real per-frame work — once it's
+  // scrolled mostly out of view there's no reason to keep paying for it, and
+  // it competes with the auto-scroll for the same CPU/GPU budget.
+  useEffect(() => {
+    if (stage !== "hero") return;
+    const hero = heroVideoRef.current;
+    if (!hero) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) hero.play().catch(() => {});
+        else hero.pause();
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [stage]);
+
   const isFixed = stage !== "hero";
 
   return (

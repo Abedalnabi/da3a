@@ -64,7 +64,20 @@ export default function AmbientParticles({
       spawn();
     };
 
-    const draw = () => {
+    // Skip the (main-thread) canvas redraw while the page is actively
+    // scrolling — this is purely decorative and competes with scroll
+    // compositing for CPU time, which is what actually causes visible jank.
+    let scrollPausedUntil = 0;
+    const onScroll = () => {
+      scrollPausedUntil = performance.now() + 200;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    const draw = (now: number = 0) => {
+      if (now < scrollPausedUntil) {
+        frameId = requestAnimationFrame(draw);
+        return;
+      }
       ctx.clearRect(0, 0, width, height);
       for (const p of particles) {
         p.y -= p.speed;
@@ -102,6 +115,7 @@ export default function AmbientParticles({
 
     return () => {
       window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(frameId);
     };
   }, [density, rgb]);
