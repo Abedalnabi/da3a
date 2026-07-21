@@ -35,7 +35,7 @@ const OG_TITLE = `دعوة زفاف ${WEDDING.groom} & ${WEDDING.bride}`;
 const OG_DESCRIPTION = `${WEDDING.dayName}، ${WEDDING.dateLabel}${WEDDING.venueName ? ` • ${WEDDING.venueName}` : ""}`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://da3a.vercel.app"),
+  metadataBase: new URL("https://da3a.pages.dev"),
   title: OG_TITLE,
   description: OG_DESCRIPTION,
   openGraph: {
