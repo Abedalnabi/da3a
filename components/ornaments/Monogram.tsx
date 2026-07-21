@@ -26,22 +26,33 @@ export default function Monogram({ size = 120, className = "", glow = false }: M
           <stop offset="50%" stopColor="var(--color-rose)" />
           <stop offset="100%" stopColor="var(--color-brown-deep)" />
         </linearGradient>
+        <linearGradient id="monogram-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="var(--color-gold-deep)" />
+          <stop offset="50%" stopColor="var(--color-gold-light)" />
+          <stop offset="100%" stopColor="var(--color-gold-deep)" />
+        </linearGradient>
       </defs>
 
       {glow && <circle cx="100" cy="100" r="95" fill="url(#monogram-glow)" />}
 
+      {/* pathLength=1 normalizes each ring's length to 1 so a dasharray/offset
+          of 1 hides it exactly, letting GSAP draw it on from the top. */}
       <circle
+        className="monogram-ring"
         cx="100"
         cy="100"
         r="88"
+        pathLength={1}
         fill="none"
-        stroke="url(#monogram-ring)"
+        stroke="url(#monogram-gold)"
         strokeWidth="1.5"
       />
       <circle
+        className="monogram-ring"
         cx="100"
         cy="100"
         r="76"
+        pathLength={1}
         fill="none"
         stroke="url(#monogram-ring)"
         strokeWidth="1"
@@ -54,7 +65,7 @@ export default function Monogram({ size = 120, className = "", glow = false }: M
           cx={100 + 88 * Math.cos((angle * Math.PI) / 180)}
           cy={100 + 88 * Math.sin((angle * Math.PI) / 180)}
           r="2.5"
-          fill="var(--color-rose)"
+          fill="var(--color-gold)"
         />
       ))}
 

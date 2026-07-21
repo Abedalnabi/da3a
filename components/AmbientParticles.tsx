@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 type AmbientParticlesProps = {
   density?: number;
   className?: string;
-  /** RGB triplet, e.g. "181,87,107" (rose). */
+  /** RGB triplet, e.g. "169,127,192" (plum rose). */
   rgb?: string;
 };
 
@@ -23,7 +23,7 @@ type Particle = {
 export default function AmbientParticles({
   density = 0.00009,
   className = "",
-  rgb = "199,124,139",
+  rgb = "169,127,192",
 }: AmbientParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

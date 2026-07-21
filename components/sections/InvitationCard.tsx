@@ -21,6 +21,9 @@ export default function InvitationCard() {
           <p className="mt-4 font-body text-2xl leading-loose text-rose-deep sm:text-3xl">
             {COPY.invitationVerse}
           </p>
+          <p className="mt-3 font-ui text-xs tracking-[0.18em] text-gold-deep">
+            {COPY.invitationVerseSource}
+          </p>
         </div>
 
         <Divider className="invitation-reveal mt-14" />
@@ -40,7 +43,7 @@ export default function InvitationCard() {
               {WEDDING.groomFatherName}
             </p>
           </div>
-          <span aria-hidden="true" className="text-xl text-rose">
+          <span aria-hidden="true" className="text-xl text-gold drop-shadow-[0_1px_4px_rgba(var(--rgb-gold),0.4)]">
             ♥
           </span>
           <div className="text-center">

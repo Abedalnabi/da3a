@@ -17,13 +17,17 @@ export default function SaveTheDate() {
         </h2>
         <Divider className="save-date-reveal mt-6" />
 
-        <div className="save-date-reveal glass-panel mt-14 w-full max-w-xs overflow-hidden rounded-3xl">
-          <div className="bg-gradient-to-b from-rose-deep to-rose px-6 py-4 text-center">
-            <p className="font-ui text-sm tracking-wide text-card">{WEDDING.monthLabel}</p>
+        <div className="save-date-reveal glass-panel mt-14 w-full max-w-xs overflow-hidden rounded-3xl ring-1 ring-gold/30">
+          <div className="relative bg-gradient-to-b from-rose-deep to-rose px-6 py-4 text-center">
+            <p className="font-ui text-sm tracking-[0.2em] text-card">{WEDDING.monthLabel}</p>
+            <span
+              aria-hidden="true"
+              className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold-light to-transparent"
+            />
           </div>
           <div className="flex w-full flex-col items-center gap-1 px-6 py-8 text-center">
             <p className="font-ui text-brown">{WEDDING.dayName}</p>
-            <p className="w-full font-numeral text-7xl font-bold leading-none tabular-nums lining-nums text-rose">
+            <p className="w-full font-numeral text-7xl font-bold leading-none tabular-nums lining-nums text-rose drop-shadow-[0_2px_10px_rgba(var(--rgb-gold),0.35)]">
               {WEDDING.dayNumber}
             </p>
             <p className="font-ui text-ink">{WEDDING.timeLabel}</p>

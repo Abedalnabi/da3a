@@ -7,9 +7,18 @@
   --color-rose: #a97fc0;
   --color-rose-deep: #7d5694;
   --color-rose-light: #d7bfe6;
+  --color-gold: #c6a15b;
+  --color-gold-light: #e4cd97;
+  --color-gold-deep: #a67c3d;
   --color-brown: #8b6d4b;
   --color-brown-deep: #6b4f35;
   --color-ink: #4a3b32;
+
+  /* Plum RGB triplets for translucent borders / shadows / canvas dust, so
+     every soft effect draws from the real theme instead of a stray pink. */
+  --rgb-rose: 169, 127, 192;
+  --rgb-rose-deep: 125, 86, 148;
+  --rgb-gold: 198, 161, 91;
 
   --font-display: var(--font-aref-ruqaa);
   --font-body: var(--font-markazi);
@@ -24,6 +33,9 @@
   --color-rose: var(--color-rose);
   --color-rose-deep: var(--color-rose-deep);
   --color-rose-light: var(--color-rose-light);
+  --color-gold: var(--color-gold);
+  --color-gold-light: var(--color-gold-light);
+  --color-gold-deep: var(--color-gold-deep);
   --color-brown: var(--color-brown);
   --color-brown-deep: var(--color-brown-deep);
   --color-ink: var(--color-ink);
@@ -62,6 +74,21 @@ body {
   font-family: var(--font-ui);
 }
 
+/* Soft depth behind the whole page: a cool plum glow drifting down from the
+   top and a warm gold glow rising from the bottom, so the cream never reads
+   as a flat fill. Fixed to the viewport and pinned behind the ambient-particle
+   layer (-z-10), so it stays put while sections scroll over it. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -20;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 50% -5%, rgba(var(--rgb-rose), 0.14), transparent 70%),
+    radial-gradient(55% 40% at 50% 105%, rgba(var(--rgb-gold), 0.12), transparent 70%);
+}
+
 ::selection {
   background: var(--color-rose-light);
   color: var(--color-rose-deep);
@@ -79,24 +106,45 @@ body {
   border-radius: 999px;
 }
 
+/* Section headings: a plum→gold→plum gradient clipped to the text, with a slow
+   sheen that sweeps the gold highlight across the letters — the page's single
+   signature motion, shared by every title. Reduced-motion freezes it to a
+   static gradient via the global rule below. */
 .text-gradient-rose {
-  background-image: linear-gradient(120deg, var(--color-rose-deep) 0%, var(--color-rose) 45%, var(--color-brown-deep) 75%, var(--color-rose-deep) 100%);
+  background-image: linear-gradient(
+    110deg,
+    var(--color-rose-deep) 0%,
+    var(--color-rose) 28%,
+    var(--color-gold) 50%,
+    var(--color-rose) 72%,
+    var(--color-rose-deep) 100%
+  );
+  background-size: 220% 100%;
+  background-position: 0% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: heading-sheen 7s ease-in-out infinite;
+}
+
+@keyframes heading-sheen {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .hairline {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-rose-light) 20%, var(--color-rose) 50%, var(--color-rose-light) 80%, transparent);
+  background: linear-gradient(90deg, transparent, var(--color-rose-light) 18%, var(--color-gold) 50%, var(--color-rose-light) 82%, transparent);
 }
 
 .glass-panel {
-  background: linear-gradient(155deg, rgba(253, 248, 239, 0.92), rgba(253, 248, 239, 0.72));
+  background: linear-gradient(155deg, rgba(253, 248, 239, 0.92), rgba(253, 248, 239, 0.7));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(181, 87, 107, 0.22);
-  box-shadow: 0 20px 50px -25px rgba(139, 66, 88, 0.35);
+  border: 1px solid rgba(var(--rgb-rose), 0.24);
+  box-shadow:
+    0 20px 50px -26px rgba(var(--rgb-rose-deep), 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 /* Fluttering fall: a gentle side-to-side sway layered on top of the overall
@@ -130,6 +178,39 @@ body {
   animation-name: petal-fall;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
+}
+
+/* Pill call-to-action: sits still, then lifts and brightens on hover/focus
+   while a soft light sweeps across it once. Keyboard focus gets the same
+   treatment as hover so it never looks dead to a non-mouse guest. */
+.pill-cta {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, filter 0.35s ease;
+}
+.pill-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.5) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pill-cta:hover,
+.pill-cta:focus-visible {
+  transform: translateY(-3px);
+  filter: brightness(1.06);
+  box-shadow: 0 20px 34px -14px rgba(var(--rgb-rose-deep), 0.85);
+}
+.pill-cta:hover::after,
+.pill-cta:focus-visible::after {
+  transform: translateX(120%);
+}
+
+/* Draws a stroked SVG path on from nothing — used for the footer monogram
+   ring. The dash length is set inline per element to match its perimeter. */
+@keyframes draw-stroke {
+  to { stroke-dashoffset: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

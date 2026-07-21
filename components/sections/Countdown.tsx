@@ -45,11 +45,16 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
   }, [padded, displayValue]);
 
   return (
-    <div className="glass-panel relative flex w-full min-w-0 flex-col items-center gap-1 rounded-2xl px-1 py-4 sm:gap-2 sm:px-3 sm:py-7">
+    <div className="glass-panel relative flex w-full min-w-0 flex-col items-center gap-1 overflow-hidden rounded-2xl px-1 py-4 sm:gap-2 sm:px-3 sm:py-7">
+      {/* gold cap — a thin brushed line across the top of each tile */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent"
+      />
       <div className="flex h-10 items-center justify-center sm:h-20">
         <span
-          className={`font-ui text-2xl font-semibold text-rose-deep transition-opacity duration-200 ease-out sm:text-5xl ${
-            fading ? "opacity-0" : "opacity-100"
+          className={`font-ui text-2xl font-semibold text-rose-deep transition-all duration-200 ease-out sm:text-5xl ${
+            fading ? "-translate-y-1 opacity-0" : "translate-y-0 opacity-100"
           }`}
         >
           {toEasternArabicNumerals(displayValue)}

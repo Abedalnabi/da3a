@@ -18,7 +18,7 @@ export default function MusicToggle() {
       onClick={toggle}
       aria-pressed={playing}
       aria-label={playing ? "إيقاف الموسيقى" : "تشغيل الموسيقى"}
-      className="group fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-rose/50 bg-card/90 text-rose-deep shadow-[0_8px_24px_-10px_rgba(140,66,88,0.5)] backdrop-blur transition hover:border-rose"
+      className="group fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-gold/40 bg-card/90 text-rose-deep shadow-[0_8px_24px_-10px_rgba(var(--rgb-rose-deep),0.55)] backdrop-blur transition duration-300 hover:scale-105 hover:border-gold hover:text-rose focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
     >
       {playing && (
         <span className="absolute inset-0 animate-ping rounded-full border border-rose-light/70" />
