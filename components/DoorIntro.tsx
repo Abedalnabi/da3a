@@ -129,7 +129,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
     };
   }, [stage]);
 
-  // Once the reveal text has finished writing itself in, start nudging the
+  //Once the reveal text has finished writing itself in, start nudging the
   // page down on its own — a small step every quarter second rather than a
   // continuous per-frame crawl — until it reaches the bottom, easing out
   // gently as it gets there. Any touch, wheel, or key input stops it
