@@ -177,10 +177,10 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
       });
     };
 
-    // Matches roughly how long the reveal timeline above takes to finish.
+    // Gives the guest 5s to scroll on their own before we take over.
     const startTimeout = window.setTimeout(() => {
       if (!stopped) intervalId = window.setInterval(tick, STEP_INTERVAL_MS);
-    }, 2600);
+    }, 6000);
 
     return () => {
       stopped = true;
