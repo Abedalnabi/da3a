@@ -323,6 +323,9 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
           <p className="reveal-meta invisible mt-2 font-numeral text-xl font-semibold text-white opacity-0 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.9))_drop-shadow(0_4px_14px_rgba(0,0,0,0.65))] sm:text-2xl">
             {WEDDING.dayName}، {WEDDING.dateLabel}
           </p>
+          <p className="reveal-meta invisible font-ui text-lg font-medium text-white/90 opacity-0 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.9))_drop-shadow(0_4px_14px_rgba(0,0,0,0.65))] sm:text-xl">
+            {COPY.heroVenueLine} • {COPY.heroTimeLine}
+          </p>
           <p className="reveal-meta invisible max-w-sm font-body text-xl font-semibold text-white opacity-0 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.9))_drop-shadow(0_4px_14px_rgba(0,0,0,0.65))] sm:text-2xl">
             {COPY.heroTagline}
           </p>

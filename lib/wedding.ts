@@ -24,6 +24,8 @@ export const COPY = {
   heroKicker: "دعوة زفاف",
   heroSubtitle: "بكم يكتمل الفرح... وبحضوركم تحلو الحكاية",
   heroTagline: "فتحنا لكم بابَ الفرح، وحلّقت البُشرى لتدعوكم",
+  heroVenueLine: "صالة البنفسج - تلاع العلي",
+  heroTimeLine: "9 مساءً",
   heroScrollHint: "مرر للأسفل",
 
   invitationVerse:
