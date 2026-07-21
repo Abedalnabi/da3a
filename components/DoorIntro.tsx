@@ -150,8 +150,8 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
     const interactionEvents: Array<keyof WindowEventMap> = ["touchstart", "wheel", "pointerdown", "keydown"];
     interactionEvents.forEach((evt) => window.addEventListener(evt, stop, { passive: true }));
 
-    const STEP_INTERVAL_MS = 20;
-    const CRAWL_SPEED_PX_PER_SEC = 100;
+    const STEP_INTERVAL_MS = 15;
+    const CRAWL_SPEED_PX_PER_SEC = 200;
     const RAMP_IN_SECONDS = 0.6;
     const SLOWDOWN_ZONE_PX = 220;
 

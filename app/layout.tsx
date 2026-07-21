@@ -74,7 +74,7 @@ export default function RootLayout({
       dir="rtl"
       className={`${arefRuqaa.variable} ${markazi.variable} ${tajawal.variable} ${cormorant.variable}`}
     >
-      <body className="min-h-full bg-cream text-ink antialiased overflow-x-hidden">
+      <body className="min-h-full bg-cream text-ink antialiased overflow-x-hidden" suppressHydrationWarning>
         {children}
       </body>
     </html>
