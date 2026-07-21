@@ -33,15 +33,22 @@ let player: YTPlayerInstance | null = null;
 let apiRequested = false;
 const readyCallbacks: Array<() => void> = [];
 
+// iOS Safari suppresses audio/video playback for elements it judges as not
+// meaningfully on screen — a 1x1px iframe shoved off-screen (the usual
+// "hidden video" trick) gets silently muted there, even though the same
+// player plays fine on desktop/Android. Giving it a real on-screen size and
+// hiding it with opacity instead keeps iOS treating it as a normal video.
 function ensureContainer() {
   if (document.getElementById(CONTAINER_ID)) return;
   const div = document.createElement("div");
   div.id = CONTAINER_ID;
   div.style.position = "fixed";
-  div.style.width = "1px";
-  div.style.height = "1px";
-  div.style.left = "-9999px";
+  div.style.width = "160px";
+  div.style.height = "90px";
+  div.style.right = "0";
   div.style.bottom = "0";
+  div.style.opacity = "0";
+  div.style.pointerEvents = "none";
   document.body.appendChild(div);
 }
 
