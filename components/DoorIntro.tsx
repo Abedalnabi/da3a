@@ -6,14 +6,18 @@ import { COPY, WEDDING } from "@/lib/wedding";
 import { initBackgroundMusic, playBackgroundMusicAudibly } from "@/lib/backgroundMusic";
 import { playKnockSound } from "@/lib/knockSound";
 
-// Slow, continuous auto-scroll all the way to the bottom of the page —
-// a steady smooth crawl rather than a jump or a burst of discrete ticks.
+// Continuous auto-scroll all the way to the bottom of the page — eases in from
+// a stop, cruises at full speed, then eases out as it nears the bottom so it
+// glides to a stop instead of cutting off abruptly.
 // Cancels itself the moment the guest scrolls, swipes, or presses a key.
-const AUTO_SCROLL_SPEED_PX_PER_SEC = 200;
+const AUTO_SCROLL_SPEED_PX_PER_SEC = 650;
+const RAMP_UP_SECONDS = 0.7;
+const EASE_OUT_DISTANCE_PX = 260;
 
 const startSmoothAutoScrollToBottom = () => {
   let cancelled = false;
   let lastTime: number | null = null;
+  let elapsedSeconds = 0;
   let rafId: number;
 
   const cancel = () => {
@@ -27,14 +31,20 @@ const startSmoothAutoScrollToBottom = () => {
     if (lastTime === null) lastTime = time;
     const dtSeconds = (time - lastTime) / 1000;
     lastTime = time;
+    elapsedSeconds += dtSeconds;
 
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    if (window.scrollY >= maxScroll - 1) return;
+    const remaining = maxScroll - window.scrollY;
+    if (remaining <= 1) return;
+
+    const rampInFactor = Math.min(elapsedSeconds / RAMP_UP_SECONDS, 1);
+    const rampOutFactor = Math.max(Math.min(remaining / EASE_OUT_DISTANCE_PX, 1), 0.15);
+    const speed = AUTO_SCROLL_SPEED_PX_PER_SEC * rampInFactor * rampOutFactor;
 
     // The object form with behavior:"auto" forces an instant per-frame scroll —
     // without it, the page's CSS `scroll-behavior: smooth` hijacks each tiny
     // scrollBy call into its own overlapping animation, causing stutter.
-    window.scrollBy({ top: AUTO_SCROLL_SPEED_PX_PER_SEC * dtSeconds, left: 0, behavior: "auto" });
+    window.scrollBy({ top: Math.min(speed * dtSeconds, remaining), left: 0, behavior: "auto" });
     rafId = window.requestAnimationFrame(step);
   };
   rafId = window.requestAnimationFrame(step);

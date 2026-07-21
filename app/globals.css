@@ -52,6 +52,8 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: var(--color-rose) var(--color-cream-deep);
+  scrollbar-width: thin;
 }
 
 body {
