@@ -7,8 +7,6 @@ type MonogramProps = {
 };
 
 export default function Monogram({ size = 120, className = "", glow = false }: MonogramProps) {
-  const initials = `${WEDDING.groom[0]} ${WEDDING.bride[0]}`;
-
   return (
     <svg
       viewBox="0 0 200 200"
@@ -62,13 +60,13 @@ export default function Monogram({ size = 120, className = "", glow = false }: M
 
       <text
         x="100"
-        y="122"
+        y="118"
         textAnchor="middle"
-        fontFamily="var(--font-display)"
-        fontSize="72"
+        fontFamily="var(--font-numeral)"
+        fontSize="56"
         fill="url(#monogram-ring)"
       >
-        {initials}
+        M &amp; R
       </text>
     </svg>
   );
