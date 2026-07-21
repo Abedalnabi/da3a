@@ -129,6 +129,67 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
     };
   }, [stage]);
 
+  // Once the reveal text has finished writing itself in, start nudging the
+  // page down on its own — a small step every quarter second rather than a
+  // continuous per-frame crawl — until it reaches the bottom, easing out
+  // gently as it gets there. Any touch, wheel, or key input stops it
+  // immediately — on mobile that means the very first touchstart of a
+  // swipe, before the browser's own momentum scroll even kicks in, so it
+  // never fights the guest for control of the page.
+  useEffect(() => {
+    if (stage !== "hero" || reducedMotionRef.current) return;
+
+    let intervalId = 0;
+    let stopped = false;
+    let elapsedSeconds = 0;
+
+    const stop = () => {
+      stopped = true;
+      window.clearInterval(intervalId);
+    };
+    const interactionEvents: Array<keyof WindowEventMap> = ["touchstart", "wheel", "pointerdown", "keydown"];
+    interactionEvents.forEach((evt) => window.addEventListener(evt, stop, { passive: true }));
+
+    const STEP_INTERVAL_MS = 20;
+    const CRAWL_SPEED_PX_PER_SEC = 100;
+    const RAMP_IN_SECONDS = 0.6;
+    const SLOWDOWN_ZONE_PX = 220;
+
+    const tick = () => {
+      if (stopped) return;
+      elapsedSeconds += STEP_INTERVAL_MS / 1000;
+
+      const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+      const remaining = maxScrollY - window.scrollY;
+      if (remaining <= 1) {
+        stop();
+        return;
+      }
+
+      const rampInFactor = Math.min(elapsedSeconds / RAMP_IN_SECONDS, 1);
+      const slowdownFactor = Math.min(remaining / SLOWDOWN_ZONE_PX, 1);
+      // behavior: "auto" forces an instant scroll for this step — the page's
+      // global `scroll-behavior: smooth` would otherwise turn every step
+      // into its own overlapping animation and stutter.
+      window.scrollBy({
+        top: CRAWL_SPEED_PX_PER_SEC * rampInFactor * slowdownFactor * (STEP_INTERVAL_MS / 1000),
+        behavior: "auto",
+      });
+    };
+
+    // Matches roughly how long the reveal timeline above takes to finish.
+    const startTimeout = window.setTimeout(() => {
+      if (!stopped) intervalId = window.setInterval(tick, STEP_INTERVAL_MS);
+    }, 2600);
+
+    return () => {
+      stopped = true;
+      window.clearTimeout(startTimeout);
+      window.clearInterval(intervalId);
+      interactionEvents.forEach((evt) => window.removeEventListener(evt, stop));
+    };
+  }, [stage]);
+
   // Decoding a full-screen looping video is real per-frame work — once it's
   // scrolled entirely out of view there's no reason to keep paying for it.
   // The threshold is 0 (fully offscreen) rather than a partial one so it
@@ -189,7 +250,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
         className={`pointer-events-none absolute inset-0 ${
           stage === "hero"
             ? "bg-[linear-gradient(to_top,_rgba(40,30,24,0.6)_0%,_rgba(40,30,24,0.3)_45%,_rgba(40,30,24,0.12)_70%,_transparent_100%)]"
-            : "bg-[linear-gradient(to_top,_rgba(74,59,50,0.45)_0%,_transparent_35%)]"
+            : "bg-[linear-gradient(to_top,_rgba(35,26,20,0.75)_0%,_rgba(35,26,20,0.4)_28%,_transparent_50%)]"
         }`}
       />
 
@@ -217,15 +278,15 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
               <h1 className="font-display text-4xl leading-[1.35] pb-2 text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-5xl">
                 {WEDDING.groom} <span aria-hidden="true">&amp;</span> {WEDDING.bride}
               </h1>
-              <p className="font-ui text-base text-white/90 drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)] sm:text-lg">
+              <p className="font-ui text-lg font-semibold text-white [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.85))_drop-shadow(0_4px_14px_rgba(0,0,0,0.6))] sm:text-xl">
                 {COPY.doorKnockHint}
               </p>
               <div className="flex items-center gap-3">
                 {Array.from({ length: KNOCKS_NEEDED }).map((_, i) => (
                   <span
                     key={i}
-                    className={`h-2.5 w-2.5 rounded-full border border-white transition-colors duration-300 ${
-                      i < knocks ? "bg-white" : "bg-transparent"
+                    className={`h-3 w-3 rounded-full border-2 border-white shadow-[0_1px_4px_rgba(0,0,0,0.8)] transition-colors duration-300 ${
+                      i < knocks ? "bg-white" : "bg-black/30"
                     }`}
                   />
                 ))}
