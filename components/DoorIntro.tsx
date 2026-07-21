@@ -193,8 +193,10 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
   }, [stage]);
 
   // Decoding a full-screen looping video is real per-frame work — once it's
-  // scrolled mostly out of view there's no reason to keep paying for it, and
-  // it competes with the auto-scroll for the same CPU/GPU budget.
+  // scrolled entirely out of view there's no reason to keep paying for it,
+  // and it competes with the auto-scroll for the same CPU/GPU budget. The
+  // threshold is 0 (fully offscreen) rather than a partial one so it doesn't
+  // pause the moment scrolling starts while the video is still mostly visible.
   useEffect(() => {
     if (stage !== "hero") return;
     const hero = heroVideoRef.current;
@@ -204,7 +206,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
         if (entry.isIntersecting) hero.play().catch(() => {});
         else hero.pause();
       },
-      { threshold: 0.1 }
+      { threshold: 0 }
     );
     observer.observe(hero);
     return () => observer.disconnect();
