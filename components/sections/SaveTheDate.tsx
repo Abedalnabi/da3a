@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import Divider from "../ornaments/Divider";
-import { buildGoogleCalendarUrl, buildIcsDataUrl } from "@/lib/calendar";
 import { COPY, WEDDING } from "@/lib/wedding";
 import { useScrollReveal } from "@/lib/useScrollReveal";
 
@@ -30,36 +29,7 @@ export default function SaveTheDate() {
             <p className="font-ui text-ink">{WEDDING.timeLabel}</p>
           </div>
         </div>
-
-        <div className="save-date-reveal mt-8 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={buildGoogleCalendarUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-rose to-rose-deep px-6 py-2.5 font-ui text-sm font-medium text-card shadow-[0_12px_26px_-12px_rgba(125,86,148,0.9)] transition hover:brightness-110"
-          >
-            <CalendarIcon />
-            {COPY.addToGoogleCalendar}
-          </a>
-          <a
-            href={buildIcsDataUrl()}
-            download="wedding.ics"
-            className="inline-flex items-center gap-2 rounded-full border border-rose/50 bg-card px-6 py-2.5 font-ui text-sm font-medium text-rose-deep transition hover:border-rose hover:bg-rose-light/20"
-          >
-            <CalendarIcon />
-            {COPY.addToAppleCalendar}
-          </a>
-        </div>
       </div>
     </section>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
-      <path d="M3.5 9.5h17M8 3v3.4M16 3v3.4" strokeLinecap="round" />
-    </svg>
   );
 }
