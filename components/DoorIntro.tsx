@@ -194,11 +194,13 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
           : "relative min-h-[100svh] overflow-hidden bg-cream"
       }
     >
-      {/* door video (paused at frame 0 until the third knock) */}
+      {/* door video (paused at frame 0 until the third knock) — poster shows
+          instantly so guests on slow connections see the door, not a blank screen */}
       <video
         ref={doorVideoRef}
         className="absolute inset-0 h-full w-full object-cover"
         src="/videos/door.mp4"
+        poster="/images/door-poster.jpg"
         muted
         playsInline
         preload="auto"
