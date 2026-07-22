@@ -53,7 +53,7 @@ export const COPY = {
 
   notesTitle: "تنويهات",
   contactTitle: "للتواصل ",
-  contactPlaceholder: "079 044 3937",
+  contactPlaceholder: "0790443937",
 
   footerQuote: "حضوركم هديلُ فرحتنا... وتمامُ بهجتنا",
 } as const;
