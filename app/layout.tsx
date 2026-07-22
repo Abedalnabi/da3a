@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { preload } from "react-dom";
 import { Aref_Ruqaa, Markazi_Text, Tajawal, Cormorant_Garamond } from "next/font/google";
 import { WEDDING } from "@/lib/wedding";
 import "./globals.css";
@@ -69,12 +68,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // The hero-door video is hidden (display:none) behind the door-knock stage
-  // until the guest gets through it, so browsers can deprioritize fetching
-  // it — hinting it explicitly here means it's already cached by the time
-  // the door opens, instead of stalling mid-loop on a cold fetch.
-  preload("/videos/hero-door.mp4", { as: "video" });
-
   return (
     <html
       lang="ar"

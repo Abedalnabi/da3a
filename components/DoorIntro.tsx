@@ -25,6 +25,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
   const [knocks, setKnocks] = useState(0);
   const reducedMotionRef = useRef(false);
   const hasRevealed = useRef(false);
+  const heroPreloadStarted = useRef(false);
 
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -78,6 +79,21 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
 
     setKnocks((prev) => {
       const next = prev + 1;
+      // First knock kicks off the hero video download — mobile Safari ignores
+      // a preload hint, so an explicit load() is what actually starts it. The
+      // knock + door-open sequence buys ~8s for it to buffer before reveal.
+      if (next === 1 && !heroPreloadStarted.current) {
+        heroPreloadStarted.current = true;
+        const hero = heroVideoRef.current;
+        if (hero) {
+          hero.preload = "auto";
+          try {
+            hero.load();
+          } catch {
+            // ignore — some browsers throw if load() races the element setup
+          }
+        }
+      }
       if (next >= KNOCKS_NEEDED) {
         window.setTimeout(() => beginOpening(), reducedMotionRef.current ? 0 : 350);
       }
@@ -240,7 +256,11 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
         style={{ display: stage === "hero" ? "none" : "block" }}
       />
 
-      {/* hero video — a single persistent element; it plays once the door opens and keeps looping */}
+      {/* hero video — a single persistent element; it plays once the door opens
+          and keeps looping. Starts with preload="none" so it doesn't compete
+          with the door video's bandwidth at page open; the first knock kicks
+          off its load() (see handleKnock) so it's fully buffered during the
+          ~8s of knocking + door-opening, before the guest ever reaches it. */}
       <video
         ref={heroVideoRef}
         className="absolute inset-0 h-full w-full object-cover"
@@ -248,7 +268,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="none"
         style={{ display: stage === "hero" ? "block" : "none" }}
       />
 
