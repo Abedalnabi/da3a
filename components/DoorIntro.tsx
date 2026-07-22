@@ -190,23 +190,29 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
     };
   }, [stage]);
 
-  // Decoding a full-screen looping video is real per-frame work — once it's
-  // scrolled entirely out of view there's no reason to keep paying for it.
-  // The threshold is 0 (fully offscreen) rather than a partial one so it
-  // doesn't pause while the video is still mostly visible.
+  // The hero video should never sit there paused — if a buffering stall,
+  // browser power-saving, or a backgrounded tab ever knocks it out of
+  // "playing", nudge it straight back rather than leaving a frozen frame.
   useEffect(() => {
     if (stage !== "hero") return;
     const hero = heroVideoRef.current;
     if (!hero) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) hero.play().catch(() => {});
-        else hero.pause();
-      },
-      { threshold: 0 }
-    );
-    observer.observe(hero);
-    return () => observer.disconnect();
+
+    const resume = () => {
+      hero.play().catch(() => {});
+    };
+
+    hero.addEventListener("pause", resume);
+    hero.addEventListener("stalled", resume);
+    hero.addEventListener("suspend", resume);
+    document.addEventListener("visibilitychange", resume);
+
+    return () => {
+      hero.removeEventListener("pause", resume);
+      hero.removeEventListener("stalled", resume);
+      hero.removeEventListener("suspend", resume);
+      document.removeEventListener("visibilitychange", resume);
+    };
   }, [stage]);
 
   const isFixed = stage !== "hero";
