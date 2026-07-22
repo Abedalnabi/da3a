@@ -42,8 +42,8 @@ export default function GardenArch({ className = "" }: GardenArchProps) {
 
       {/* distant foliage */}
       <g opacity="0.35">
-        <ellipse cx="60" cy="120" rx="70" ry="34" fill="#9caf7f" />
-        <ellipse cx="260" cy="128" rx="66" ry="30" fill="#9caf7f" />
+        <ellipse cx="60" cy="120" rx="70" ry="34" fill="var(--color-gold-light)" />
+        <ellipse cx="260" cy="128" rx="66" ry="30" fill="var(--color-gold-light)" />
       </g>
 
       {/* ground */}
