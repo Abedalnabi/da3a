@@ -6,6 +6,7 @@ import Notes from "./sections/Notes";
 import Footer from "./sections/Footer";
 import FloatingFlowers from "./ornaments/FloatingFlowers";
 import PetalFall from "./ornaments/PetalFall";
+import PetalRise from "./ornaments/PetalRise";
 import AmbientParticles from "./AmbientParticles";
 import MusicToggle from "./MusicToggle";
 
@@ -16,6 +17,7 @@ export default function MainSite() {
         <AmbientParticles density={0.00003} />
       </div>
       <PetalFall />
+      <PetalRise />
       <FloatingFlowers />
       <MusicToggle />
 

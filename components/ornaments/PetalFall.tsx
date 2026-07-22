@@ -4,11 +4,24 @@ import { useMemo } from "react";
 import FlowerIcon from "./FlowerIcon";
 import PetalSingle from "./PetalSingle";
 import LeafSprig from "./LeafSprig";
+import Sparkle from "./Sparkle";
+import HeartPetal from "./HeartPetal";
 
-const SHAPES = [FlowerIcon, PetalSingle, LeafSprig];
+// A mix of blossoms, petals, leaves, sparkles and hearts in both the rose and
+// gold tones already used elsewhere on the page, so the fall reads as varied
+// instead of the same three silhouettes repeating.
+export const SHAPES: Array<(size: number) => React.ReactNode> = [
+  (size) => <FlowerIcon size={size} tone="rose" />,
+  (size) => <FlowerIcon size={size} tone="gold" />,
+  (size) => <PetalSingle size={size} tone="rose" />,
+  (size) => <PetalSingle size={size} tone="gold" />,
+  (size) => <LeafSprig size={size} />,
+  (size) => <Sparkle size={size} tone="gold" />,
+  (size) => <HeartPetal size={size} tone="rose" />,
+];
 
 type Petal = {
-  Shape: (typeof SHAPES)[number];
+  render: (typeof SHAPES)[number];
   left: string;
   size: number;
   duration: number;
@@ -19,7 +32,7 @@ type Petal = {
   spin: number;
 };
 
-const PETAL_COUNT = 16;
+const PETAL_COUNT = 25;
 
 function generatePetals(): Petal[] {
   return Array.from({ length: PETAL_COUNT }, () => {
@@ -28,14 +41,14 @@ function generatePetals(): Petal[] {
     // varying independently and looking like random noise.
     const depth = Math.random();
     return {
-      Shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
+      render: SHAPES[Math.floor(Math.random() * SHAPES.length)],
       left: `${Math.random() * 100}%`,
-      size: 10 + depth * 18,
+      size: 8 + depth * 13,
       duration: 24 - depth * 10 + Math.random() * 4,
       delay: Math.random() * -26,
       drift: (Math.random() - 0.5) * 150,
       sway: 14 + Math.random() * 26,
-      opacity: 0.18 + depth * 0.35,
+      opacity: 0.3 + depth * 0.35,
       spin: Math.random() > 0.5 ? 360 : -360,
     };
   });
@@ -46,7 +59,7 @@ export default function PetalFall() {
   const petals = useMemo(generatePetals, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden" aria-hidden="true">
       {petals.map((petal, i) => (
         <span
           key={i}
@@ -63,7 +76,7 @@ export default function PetalFall() {
             } as React.CSSProperties
           }
         >
-          <petal.Shape size={petal.size} />
+          {petal.render(petal.size)}
         </span>
       ))}
     </div>

@@ -180,6 +180,39 @@ body::before {
   animation-iteration-count: infinite;
 }
 
+/* Mirror of petal-fall: drifts upward from below the viewport instead of
+   down from above, for the rising sparkles/petals layered against the fall. */
+@keyframes petal-rise {
+  0% {
+    transform: translate3d(0, 10vh, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.2 + var(--petal-sway, 24px)), -13vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.2));
+  }
+  40% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.4 - var(--petal-sway, 24px)), -36vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.4));
+  }
+  60% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.6 + var(--petal-sway, 24px)), -59vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.6));
+  }
+  80% {
+    transform: translate3d(calc(var(--petal-drift, 0px) * 0.8 - var(--petal-sway, 24px)), -82vh, 0)
+      rotate(calc(var(--petal-spin, 360deg) * 0.8));
+  }
+  100% {
+    transform: translate3d(var(--petal-drift, 0px), -115vh, 0) rotate(var(--petal-spin, 360deg));
+  }
+}
+
+.animate-petal-rise {
+  animation-name: petal-rise;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
 /* Pill call-to-action: sits still, then lifts and brightens on hover/focus
    while a soft light sweeps across it once. Keyboard focus gets the same
    treatment as hover so it never looks dead to a non-mouse guest. */
