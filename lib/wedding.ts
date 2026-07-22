@@ -73,7 +73,7 @@ export const PROGRAM_ITEMS = [
 ] as const;
 
 export const NOTES_ITEMS = [
-  'جنة الاطفال منازلهم' ,
   "الدعوة تشمل حاملها والعائلة الكريمة",
+  ,'يمنع التصوير في صالة النساء'
 ] as const;
 
