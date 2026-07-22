@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { COPY, WEDDING } from "@/lib/wedding";
 import { initBackgroundMusic, playBackgroundMusicAudibly } from "@/lib/backgroundMusic";
 import { playKnockSound } from "@/lib/knockSound";
+import FlowerIcon from "./ornaments/FlowerIcon";
 
 type DoorIntroProps = {
   /** Called once, the moment the door finishes opening and the hero video takes over. */
@@ -135,7 +136,8 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
     if (stage !== "hero") return;
     const tl = gsap
       .timeline({ defaults: { ease: "power3.out" } })
-      .fromTo(".reveal-groom", { autoAlpha: 0, y: 20, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9 }, 0.1)
+      .fromTo(".reveal-kicker", { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.7 }, 0)
+      .fromTo(".reveal-groom", { autoAlpha: 0, y: 20, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9 }, 0.35)
       .fromTo(".reveal-amp", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.6 }, "-=0.3")
       .fromTo(".reveal-bride", { autoAlpha: 0, y: 20, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9 }, "-=0.4")
       .fromTo(".reveal-meta", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.15 }, "-=0.3");
@@ -332,6 +334,13 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
           ref={revealRef}
           className="relative flex min-h-[100svh] flex-col items-center justify-center gap-3 px-6 text-center"
         >
+          <div className="reveal-kicker invisible flex flex-col items-center gap-2 opacity-0">
+            <span className="font-ui text-sm font-semibold tracking-[0.25em] text-white [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.85))_drop-shadow(0_4px_14px_rgba(0,0,0,0.6))] sm:text-base">
+              {COPY.heroKicker}
+            </span>
+            <FlowerIcon size={22} tone="gold" className="drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]" />
+          </div>
+
           <h1 className="font-display text-5xl font-bold leading-[1.4] text-white sm:text-6xl">
             <span className="reveal-groom invisible inline-block opacity-0 [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.9))_drop-shadow(0_6px_20px_rgba(0,0,0,0.6))]">
               {WEDDING.groom}
