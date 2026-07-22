@@ -1,6 +1,6 @@
 export const WEDDING = {
   groom: "محمد",
-  bride: "أميرته",
+  bride: "وصية الرسول",
   dayName: "الخميس",
   dateLabel: "13 أغسطس 2026",
   monthLabel: "أغسطس 2026",

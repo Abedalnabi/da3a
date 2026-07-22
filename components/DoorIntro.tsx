@@ -275,8 +275,12 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
               ref={knockTextRef}
               className="door-intro-enter invisible absolute inset-x-0 bottom-16 flex translate-y-4 flex-col items-center gap-4 px-6 text-center opacity-0 sm:bottom-20"
             >
-              <h1 className="font-display text-4xl leading-[1.35] pb-2 text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-5xl">
-                {WEDDING.groom} <span aria-hidden="true">&amp;</span> {WEDDING.bride}
+              <h1 className="font-display text-3xl leading-[1.15] pb-2 text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-4xl">
+                <span className="block">{WEDDING.groom}</span>
+                <span aria-hidden="true" className="block text-xl sm:text-2xl">
+                  &amp;
+                </span>
+                <span className="block">{WEDDING.bride}</span>
               </h1>
               <p className="font-ui text-lg font-semibold text-white [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.85))_drop-shadow(0_4px_14px_rgba(0,0,0,0.6))] sm:text-xl">
                 {COPY.doorKnockHint}
