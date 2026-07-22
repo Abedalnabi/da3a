@@ -13,6 +13,7 @@ type YTPlayerInstance = {
   setVolume: (v: number) => void;
   playVideo: () => void;
   pauseVideo: () => void;
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void;
   isMuted: () => boolean;
   getPlayerState: () => number;
 };
@@ -28,6 +29,7 @@ declare global {
 
 const VIDEO_ID = "Hp8WTVqR_0U";
 const CONTAINER_ID = "background-music-player";
+const START_SECONDS = 67;
 
 let player: YTPlayerInstance | null = null;
 let apiRequested = false;
@@ -99,6 +101,7 @@ function whenReady(callback: () => void) {
         controls: 0,
         disablekb: 1,
         fs: 0,
+        start: START_SECONDS,
         loop: 1,
         playlist: VIDEO_ID,
         playsinline: 1,
@@ -111,8 +114,15 @@ function whenReady(callback: () => void) {
         },
         // Fires for every state the player passes through, including while
         // the tab is backgrounded — if it lands on "paused" while we still
-        // intend to be playing, nudge it straight back to playing.
+        // intend to be playing, nudge it straight back to playing. Looping
+        // (state 0, "ended") restarts from 0:00 on its own, so seek back to
+        // the intro-skip point before replaying it.
         onStateChange: (event: { data: number }) => {
+          if (event.data === 0) {
+            player?.seekTo(START_SECONDS, true);
+            if (shouldBePlaying) player?.playVideo();
+            return;
+          }
           if (shouldBePlaying && event.data === 2) {
             player?.playVideo();
           }
