@@ -29,7 +29,13 @@ declare global {
 
 const VIDEO_ID = "Hp8WTVqR_0U";
 const CONTAINER_ID = "background-music-player";
-const START_SECONDS = 67;
+// The song should always begin from its very start the first time it becomes
+// audible (the guest's first knock), and loop back to the start thereafter.
+const START_SECONDS = 0;
+// Set once the music has been made audible, so the "start from the beginning"
+// seek only happens on that first knock — later pause/resume toggles must not
+// yank the song back to 0:00.
+let startedAudibly = false;
 
 let player: YTPlayerInstance | null = null;
 let apiRequested = false;
@@ -153,6 +159,12 @@ export function playBackgroundMusicAudibly() {
   shouldBePlaying = true;
   whenReady(() => {
     try {
+      // First audible start (the first knock) always begins from 0:00, even
+      // though the player has been quietly autoplaying muted since page load.
+      if (!startedAudibly) {
+        startedAudibly = true;
+        player?.seekTo(START_SECONDS, true);
+      }
       player?.unMute();
       player?.setVolume(70);
       player?.playVideo();
@@ -160,6 +172,44 @@ export function playBackgroundMusicAudibly() {
       // ignore playback errors (e.g. embedding disabled for this video)
     }
   });
+}
+
+// Whether the persistent gesture-unlock listener is currently attached.
+let audioUnlockAttached = false;
+
+/**
+ * Attaches a listener that starts the music on the guest's FIRST real
+ * interaction anywhere on the page, and keeps retrying on every subsequent
+ * interaction until the audio is actually audible (unmuted). This covers the
+ * cases a single click can't: the YouTube player not being ready yet at the
+ * moment of the first tap, or an auto-opened door where no tap happened at all
+ * — the instant the guest touches, scrolls, or presses a key, sound kicks in.
+ * (Browsers forbid audio outside a real gesture, so this is the earliest it can
+ * legitimately start.)
+ */
+export function ensureAudioUnlocksOnGesture() {
+  if (audioUnlockAttached || typeof window === "undefined") return;
+  audioUnlockAttached = true;
+
+  const events: Array<keyof WindowEventMap> = ["pointerdown", "touchstart", "keydown", "click"];
+
+  const detach = () => {
+    events.forEach((evt) => window.removeEventListener(evt, tryUnlock, true));
+    audioUnlockAttached = false;
+  };
+
+  const tryUnlock = () => {
+    playBackgroundMusicAudibly();
+    try {
+      // Once the player exists and is genuinely unmuted, the gesture did its
+      // job — stop listening. Until then, keep trying on each interaction.
+      if (player && !player.isMuted()) detach();
+    } catch {
+      // player not ready yet — leave the listener attached to retry
+    }
+  };
+
+  events.forEach((evt) => window.addEventListener(evt, tryUnlock, { capture: true, passive: true }));
 }
 
 /** Toggles play/pause and returns the resulting playing state. */

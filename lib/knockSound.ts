@@ -11,6 +11,12 @@ function getContext(): AudioContext | null {
   return audioCtx;
 }
 
+/** Creates and resumes the AudioContext ahead of time so the first real knock
+ *  isn't the thing that has to cold-start it — call from a user gesture. */
+export function warmUpKnockAudio() {
+  getContext();
+}
+
 /** Synthesizes a short percussive door-knock "thud" — no external audio file needed. */
 export function playKnockSound() {
   const ctx = getContext();

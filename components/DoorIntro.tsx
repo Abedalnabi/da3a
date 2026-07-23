@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { COPY, WEDDING } from "@/lib/wedding";
-import { initBackgroundMusic, playBackgroundMusicAudibly } from "@/lib/backgroundMusic";
-import { playKnockSound } from "@/lib/knockSound";
+import { initBackgroundMusic, playBackgroundMusicAudibly, ensureAudioUnlocksOnGesture } from "@/lib/backgroundMusic";
+import { playKnockSound, warmUpKnockAudio } from "@/lib/knockSound";
 import FlowerIcon from "./ornaments/FlowerIcon";
 
 type DoorIntroProps = {
@@ -31,6 +31,12 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     initBackgroundMusic();
+    // Music + knock audio can only legitimately start from a real gesture, so
+    // arm a listener that unlocks both on the guest's first interaction —
+    // covering fast knocks (player not ready yet) and the auto-opened door.
+    ensureAudioUnlocksOnGesture();
+    const warm = () => warmUpKnockAudio();
+    window.addEventListener("pointerdown", warm, { capture: true, once: true, passive: true });
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -39,7 +45,10 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
         { autoAlpha: 1, y: 0, duration: 1, stagger: 0.15, ease: "power2.out" }
       );
     }, rootRef);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      window.removeEventListener("pointerdown", warm, true);
+    };
   }, []);
 
   const spawnRipple = (x: number, y: number) => {
@@ -301,7 +310,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
           {stage === "knocking" && (
             <div
               ref={knockTextRef}
-              className="door-intro-enter invisible absolute inset-x-0 bottom-16 flex translate-y-4 flex-col items-center gap-4 px-6 text-center opacity-0 sm:bottom-20"
+              className="door-intro-enter invisible absolute inset-x-0 top-[28%] flex translate-y-4 flex-col items-center gap-5 px-6 text-center opacity-0 sm:top-[30%]"
             >
               <h1 className="font-display text-3xl leading-[1.15] pb-2 text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-4xl">
                 <span className="block">{WEDDING.groom}</span>
@@ -310,7 +319,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
                 </span>
                 <span className="block">{WEDDING.bride}</span>
               </h1>
-              <p className="font-ui text-lg font-semibold text-white [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.85))_drop-shadow(0_4px_14px_rgba(0,0,0,0.6))] sm:text-xl">
+              <p className="rounded-full border-2 border-gold/80 bg-black/35 px-7 py-3 font-ui text-xl font-bold text-white shadow-[0_6px_20px_-6px_rgba(0,0,0,0.7)] backdrop-blur-sm [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.85))] sm:text-2xl">
                 {COPY.doorKnockHint}
               </p>
               <div className="flex items-center gap-3">
