@@ -319,7 +319,7 @@ export default function DoorIntro({ onRevealed }: DoorIntroProps) {
                 </span>
                 <span className="block">{WEDDING.bride}</span>
               </h1>
-              <p className="rounded-full border-2 border-gold/80 bg-black/35 px-7 py-3 font-ui text-xl font-bold text-white shadow-[0_6px_20px_-6px_rgba(0,0,0,0.7)] backdrop-blur-sm [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.85))] sm:text-2xl">
+              <p className="border-b-2 border-gold/80 pb-2 font-ui text-xl font-bold text-white [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.9))_drop-shadow(0_4px_14px_rgba(0,0,0,0.65))] sm:text-2xl">
                 {COPY.doorKnockHint}
               </p>
               <div className="flex items-center gap-3">
